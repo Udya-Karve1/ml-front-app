@@ -36,6 +36,29 @@ export class HttlMLServiceService {
     }));
   }
 
+  getStats() {
+    return this.httpClient.get(this.urlPrefix+ "/stats", {headers: this.getSessionHeader()}).pipe(map(response=>{
+      console.log(response);
+      return response;
+    }));
+  }
+
+
+  getUniqueValues(columnName) {
+    return this.httpClient.get(this.urlPrefix+ "/unique-values/"+columnName, {headers: this.getSessionHeader()}).pipe(map(response=>{
+      console.log(response);
+      return response;
+    }));
+  }
+
+
+  getOutliers() {
+    return this.httpClient.get(this.urlPrefix+ "/outliers", {headers: this.getSessionHeader()}).pipe(map(response=>{
+      console.log(response);
+      return response;
+    }));
+  }
+
   getSessionHeader() {
     const headers = new HttpHeaders()
       .set('user-session', this._cookieService.get('user-serssion'));

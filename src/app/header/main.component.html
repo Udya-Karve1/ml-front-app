@@ -1,69 +1,98 @@
-<aside class="main-sidebar">
-    <form class="form-horizontal common-form">
-        <section>
-            <div class="container">
-                <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                    <input type="file" [formControl]="fileNameCtrl" class="form-control btn-lg" id="customFile" (change)="handleFileInput($event)"/>
-                    <button class="form-control  btn-lg" aria-disabled="false" (click)="uploadFile()">Upload</button>
-                </nav>
-            </div>        
-        </section>
-    </form>
-    <div class="container" id="div-file">
-        {{isDatasource}} ==== {{datasource}}
+<div>
+    <aside class="main-sidebar">
+        <form class="form-horizontal common-form">
+            <table class="table">
+                <tr>
+                    <th>One</th>
+                    <td>two</td>
+                </tr>
+                <tr>
+                    <td>three</td>
+                    <td>four</td>
+                </tr>
+            </table>
 
-
-        <div *ngIf="isDatasource">
-            <div>
-                <a class="btn " data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
-                    Link with href
-                </a>
-                <div class="collapse" id="collapseExample">
-                    <div class="card card-body">
-                        <div class="row">
-                            <div class="col-3">
-                                <button class="btn btn-outline-secondary" (click)="getMissingValues()">Missing</button>
-                            </div>
-                            <div class="col-3">
-                                <button class="btn btn-outline-secondary" (click)="getMissingValues()">Discinct</button>
-                            </div>
-                            <div class="col-3">
-                                <button class="btn btn-outline-secondary" (click)="getMissingValues()">Stats</button>    
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="accordion" id="accordionExample">
-                <div class="accordion-item">
-                  <h2 class="accordion-header" id="headingOne">
-                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                      {{datasource}}
-                    </button>
-                  </h2>
-                  <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-                    <div class="accordion-body">
-                        <div class="row">
-                            <div class="col-3">
-                                <button class="btn btn-outline-secondary" (click)="getMissingValues()">Missing</button>
-                            </div>
-                            <div class="col-3">
-                                <button class="btn btn-outline-secondary" (click)="getMissingValues()">Discinct</button>
-                            </div>
-                            <div class="col-3">
-                                <button class="btn btn-outline-secondary" (click)="getMissingValues()">Stats</button>    
-                            </div>
-
-                        </div>
+            <section>
+                <div class="container">
+                    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                        <input type="file" [formControl]="fileNameCtrl" class="form-control btn-lg" id="customFile" (change)="handleFileInput($event)"/>
+                        <button class="form-control  btn-lg" aria-disabled="false" (click)="uploadFile()">Upload</button>
+                    </nav>
+                </div>        
+            </section>
+        </form>
+        <div class="container" id="div-file">
+            {{isDatasource}} ==== {{datasource}}
     
+            <div *ngIf="isDatasource">
+                <div>
+                    <div class="row">
+                        <div class="d-grid">
+                            <button
+                            type="button"
+                            class="btn-link"
+                            (click)="isCollapsed=!isCollapsed"
+                            [attr.aria-expanded]="!isCollapsed"
+                            aria-controls="collapseExample">
+                            {{datasource}}
+                        </button>
+    
+                        </div>
                     </div>
-                  </div>
+                    <div [collapse]="isCollapsed" [isAnimated]="true">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-3">
+                                        <div class="d-grid gap-1">
+                                            <button class="btn btn-outline-secondary" (click)="getMissingValues()">Missing</button>
+                                        </div>                                    
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="d-grid gap-1">
+
+
+                                            <div class="btn-group" dropdown>
+                                                <button id="button-basic" 
+                                                    dropdownToggle type="button" 
+                                                    class="btn btn-outline-secondary dropdown-toggle"
+                                                    aria-controls="dropdown-basic"> 
+                                                    Unique
+                                                </button>
+                                                  
+                                                <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu" role="menu" aria-labelledby="button-basic">
+                                                    <li role="menuitem" *ngFor="let item of datasourceColumnNames; ">
+                                                        <button class="dropdown-item button-basic" (click)="getUniqueValues(item)">{{item}}</button>
+                                                    </li>
+                                                </ul>
+                                            </div>
+
+
+                                        </div>                                    
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="d-grid gap-1">
+                                            <button class="btn btn-outline-secondary" (click)="getStats()">Stats</button>
+                                        </div>                                    
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="d-grid gap-1">
+                                            <button class="btn btn-outline-secondary" (click)="getOutliers()">Outlier</button>
+                                        </div>                                    
+                                    </div>
+        
+                                </div>
+    
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>     
+                
+            </div>
         </div>
+    </aside>
+
+    <div class="content-wrapper" id="maindiv">
     </div>
-</aside>
-<div class="main-canvas" id="maindiv" style="white-space: pre-wrap; scroll-behavior: auto;">
-            
+    
 </div>

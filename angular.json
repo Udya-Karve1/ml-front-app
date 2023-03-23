@@ -99,7 +99,11 @@
             "styles": [
               "src/styles.css"
             ],
-            "scripts": []
+            "scripts": [
+              "node_module/bootstrap/dist/js/bootstrap.min.js",
+              "node_module/jquery/dist/jquery.min.js",
+              "node_module/bootstrap/js/dist/util/popover.js"
+            ]
           }
         }
       }
