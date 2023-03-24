@@ -10,7 +10,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
-
+import { ModalModule, BsModalService } from 'ngx-bootstrap/modal';
 
 
 
@@ -28,9 +28,10 @@ import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
     AppRoutingModule,
     BrowserAnimationsModule,
     NgScrollbarModule,
-    BsDropdownModule
+    BsDropdownModule,
+    ModalModule
   ],
-  providers: [],
+  providers: [ BsModalService ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

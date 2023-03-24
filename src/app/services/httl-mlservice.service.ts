@@ -59,11 +59,26 @@ export class HttlMLServiceService {
     }));
   }
 
+  getDataset() {
+    return this.httpClient.get(this.urlPrefix+ "/data-set", {headers: this.getSessionHeader()}).pipe(map(response=>{
+      console.log(response);
+      return response;
+    }));
+  }
+
+
   getSessionHeader() {
     const headers = new HttpHeaders()
       .set('user-session', this._cookieService.get('user-serssion'));
 
     return headers;
+  }
+
+  postRegression(regressionBody) {
+    return this.httpClient.post(this.urlPrefix+ "/regression", regressionBody, {headers: this.getSessionHeader()}).pipe(map(response=>{
+      console.log(response);
+      return response;
+    }));
   }
 
 
