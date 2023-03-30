@@ -1,17 +1,6 @@
 <div>
     <aside class="main-sidebar">
         <form class="form-horizontal common-form">
-            <table class="table">
-                <tr>
-                    <th>One</th>
-                    <td>two</td>
-                </tr>
-                <tr>
-                    <td>three</td>
-                    <td>four</td>
-                </tr>
-            </table>
-
             <section>
                 <div class="container">
                     <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -21,12 +10,10 @@
                 </div>        
             </section>
         </form>
-        <div class="container" id="div-file">
-            {{isDatasource}} ==== {{datasource}}
-    
+        <div class="container" id="div-file">    
             <div *ngIf="isDatasource">
                 <div>
-                    <div class="row">
+                    <div class="row g-1">
                         <div class="d-grid">
                             <button type="button" class="btn-link" (click)="isCollapsed=!isCollapsed"
                                 [attr.aria-expanded]="!isCollapsed" aria-controls="collapseExample">
@@ -38,7 +25,67 @@
                     <div [collapse]="isCollapsed" [isAnimated]="true">
                         <div class="card">
                             <div class="card-body">
-                                <div class="row">
+                                <div class="row g-2">
+                                    <div class="col-3 d-grid">
+                                        <div class="btn-group" dropdown>
+                                            <button id="button-basic" dropdownToggle type="button" class="btn btn-outline-secondary dropdown-toggle"
+                                                aria-controls="dropdown-basic"> Top
+                                            </button>
+                                              
+                                            <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu" role="menu" aria-labelledby="button-basic">
+                                                <li role="menuitem">
+                                                    <button class="dropdown-item button-basic" (click)="getTopRecord(5)">5</button>
+                                                </li>
+                                                <li role="menuitem">
+                                                    <button class="dropdown-item button-basic" (click)="getTopRecord(10)">10</button>
+                                                </li>
+                                                <li role="menuitem">
+                                                    <button class="dropdown-item button-basic" (click)="getTopRecord(25)">25</button>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="col-3 d-grid">
+                                        <div class="btn-group" dropdown>
+                                            <button id="button-basic" dropdownToggle type="button" class="btn btn-outline-secondary dropdown-toggle"
+                                                aria-controls="dropdown-basic"> Trail
+                                            </button>
+                                              
+                                            <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu" role="menu" aria-labelledby="button-basic">
+                                                <li role="menuitem">
+                                                    <button class="dropdown-item button-basic" (click)="getTrail(5)">5</button>
+                                                </li>
+                                                <li role="menuitem">
+                                                    <button class="dropdown-item button-basic" (click)="getTrail(10)">10</button>
+                                                </li>
+                                                <li role="menuitem">
+                                                    <button class="dropdown-item button-basic" (click)="getTrail(25)">25</button>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-6 d-grid">
+                                        <div class="btn-group" dropdown>
+                                            <button id="button-basic" dropdownToggle type="button" class="btn btn-outline-secondary dropdown-toggle"
+                                                aria-controls="dropdown-basic"> Categorial
+                                            </button>
+                                              
+                                            <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu" role="menu" aria-labelledby="button-basic">
+                                                <li role="menuitem">
+                                                    <button class="dropdown-item button-basic" (click)="getTrail(5)"> Handle and View</button>
+                                                </li>
+                                                <li role="menuitem">
+                                                    <button class="dropdown-item button-basic" (click)="getTrail(10)">Handle and Save</button>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+
+                                    
+
+
                                     <div class="col-3">
                                         <div class="d-grid gap-1">
                                             <button class="btn btn-outline-secondary" (click)="getMissingValues()">Missing</button>
@@ -47,11 +94,8 @@
                                     <div class="col-3">
                                         <div class="d-grid gap-1">
                                             <div class="btn-group" dropdown>
-                                                <button id="button-basic" 
-                                                    dropdownToggle type="button" 
-                                                    class="btn btn-outline-secondary dropdown-toggle"
-                                                    aria-controls="dropdown-basic"> 
-                                                    Unique
+                                                <button id="button-basic" dropdownToggle type="button" class="btn btn-outline-secondary dropdown-toggle"
+                                                    aria-controls="dropdown-basic"> Unique
                                                 </button>
                                                   
                                                 <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu" role="menu" aria-labelledby="button-basic">
@@ -94,12 +138,20 @@
 
                                         </div>                                    
                                     </div>
-        
-                                </div>
-                                <div class="row">
-                                    <div class="col-12"><div></div></div>
-                                </div>
-                                <div class="row">
+
+                                    <div class="btn-group" dropdown>
+                                        <button id="button-basic" dropdownToggle type="button" class="btn btn-outline-danger dropdown-toggle"
+                                            aria-controls="dropdown-basic"> Delete column
+                                        </button>
+                                          
+                                        <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu" role="menu" aria-labelledby="button-basic">
+                                            <li role="menuitem" *ngFor="let item of datasourceColumnNames; ">
+                                                <button class="dropdown-item button-basic" (click)="getUniqueValues(item)">{{item}}</button>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+
                                     <div class="col-6 d-grid gap-1">
                                         <!-- <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#regressioModal">Regression</button> -->
                                         <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#regressioModal" (click)="openModal(regressionTemplate, 1)">
@@ -110,9 +162,19 @@
                                         <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#regressioModal" (click)="openModal(regressionTemplate, 2)">
                                             Classification
                                         </button>
-                                    </div>       
+                                    </div>
+                                    <div class="col-6 d-grid">
+                                        <!-- <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#regressioModal">Regression</button> -->
+                                        <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#regressioModal" (click)="openModal(regressionTemplate, 3)">
+                                            Association
+                                        </button>
+                                    </div>
+                                    <div class="col-6 d-grid">
+                                        <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#regressioModal" (click)="openModal(regressionTemplate, 4)">
+                                            Clustering
+                                        </button>
+                                    </div>
                                 </div>
-    
                             </div>
                         </div>
                     </div>
@@ -127,7 +189,7 @@
 
     <ng-template #regressionTemplate>
         <div class="modal-header">
-           <h4 class="modal-title pull-left">Modal</h4>
+           <h4 class="modal-title pull-left">{{modalTitle}}</h4>
            <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
               <span aria-hidden="true">×</span>
            </button>
@@ -139,7 +201,7 @@
                         <label>Algorithm</label>
                     </div>
                     <div class="col-8">
-                        <select class="form-select" aria-label="">
+                        <select class="form-select" aria-label="" [(ngModel)]="selectedAlgorithm">
                             <option selected></option>
                             <option *ngFor="let item of modalAlgorithmList" [value]="item.value">{{item.label}}</option>
                         </select>
@@ -150,7 +212,7 @@
                         <label>Class Attribute</label>
                     </div>
                     <div class="col-8">
-                        <select class="form-select" aria-label="">
+                        <select class="form-select" aria-label="" [(ngModel)]="selectedYColumn">
                             <option *ngFor="let column of datasourceColumnNames" [value]="column">{{column}}</option>
                         </select>
                     </div>
@@ -163,5 +225,44 @@
         </div>
      </ng-template>
 
+     <!-- ****** TOAST STARTS ************** -->
 
+     <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+          <div class="toast-header">
+            <img src="..." class="rounded me-2" alt="...">
+            <strong class="me-auto">Bootstrap</strong>
+            <small>11 mins ago</small>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+          </div>
+          <div class="toast-body">
+            Hello, world! This is a toast message.
+          </div>
+        </div>
+     </div>
+
+
+
+    <!-- ****** OFFCANVAS STARTS ************** -->
+     <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+        <div class="offcanvas-header">
+          <h5 class="offcanvas-title" id="offcanvasExampleLabel">Offcanvas</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+          <div>
+            Some text as placeholder. In real life you can have the elements you have chosen. Like, text, images, lists, etc.
+          </div>
+          <div class="dropdown mt-3">
+            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+              Dropdown button
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#">Action</a></li>
+              <li><a class="dropdown-item" href="#">Another action</a></li>
+              <li><a class="dropdown-item" href="#">Something else here</a></li>
+            </ul>
+          </div>
+        </div>
+    </div>
 </div>

@@ -11,6 +11,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { ModalModule, BsModalService } from 'ngx-bootstrap/modal';
+import { AppConstants } from './app.constants';
 
 
 
@@ -31,7 +32,7 @@ import { ModalModule, BsModalService } from 'ngx-bootstrap/modal';
     BsDropdownModule,
     ModalModule
   ],
-  providers: [ BsModalService ],
+  providers: [ BsModalService, AppConstants ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -3,9 +3,10 @@ import { ComponentInterService } from '../services/component-inter.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { HttlMLServiceService } from '../services/httl-mlservice.service';
 import { CookieService } from 'ngx-cookie-service';
-import * as d3 from 'src/assets/js/d3.js';
-import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { GraphPlotService } from '../services/graph.plot.service';
+import { AppConstants } from '../app.constants'
 
 @Component({
   selector: 'app-header',
@@ -25,14 +26,32 @@ export class MainComponent implements OnInit {
   
 
   statHeadRow = null;
+  /*
   statColumns = ["name","date","nominal","numeric","regular","averagable","dateFormat","count","max","min","stdDev","mean","sum","distinct","unique","missing","nominalCount"];
   statColumnTitles = ["Name","isDate","isNominal","isNumeric","isRegular","isAveragable","DateFormat","count","max","min","stdDev","mean","sum","distinct","unique","missing","nominalCount"];
+*/
   datasourceColumnNames = [];
-
+  /*
+  associationList = [{label: "Apriori", value: "Apriori"}, {label: "Eclat", value: "Eclat"}, {label: "F-P Growth", value: "FPGrowth"}];
+  clusteringList = [{label: "K-means", value: "Kmeans"}, {label: "DBSCAN", value: "DBSCAN"}
+  , {label: "F-P Growth", value: "FPGrowth"}
+  , {label: "Gaussian Mixture", value: "GaussianMixture"}
+  , {label: "BIRCH", value: "BIRCH"}
+  , {label: "Affinity Propagation", value: "AffinityPropagation"}
+  , {label: "Mean-Shift", value: "MeanShift"}
+  , {label: "OPTICS", value: "OPTICS"}
+  , {label: "Agglomerative", value: "Agglomerative"}
+];
+*/
   
+  modalTitle = "";
+  selectedYColumn = "";
 
+  selectedAlgorithm = "";
+  /*
   regressionList = [{label: "Linear Regression", value: "LinearRegression"}, {label: "Random Forest", value: "RandomForest"}];
   classificationList = [{label: "Naive Byes", value: "NaiveByes"}, {label: "Tree", value: "Tree"}, {label: "Random Forest", value: "Random Forest"}, {label: "Logistic", value: "Logistic regression"}];
+  */
   modalAlgorithmList = [{label: "", value: ""}];
 
 
@@ -41,7 +60,9 @@ export class MainComponent implements OnInit {
   constructor(private componentInterService: ComponentInterService
     , private httpService: HttlMLServiceService
     , private _cookiesService: CookieService
-    , private modalService: BsModalService) { }
+    , private modalService: BsModalService
+    , private graphPlotService: GraphPlotService
+    , private appConstants: AppConstants) { }
 
   ngOnInit(): void {
     this.datasource = "";
@@ -61,7 +82,7 @@ export class MainComponent implements OnInit {
       
       
 
-      this.getTopRecord();
+      this.getTopRecord(5);
       this.isDatasource = true;
     },
     error=>{      
@@ -69,8 +90,8 @@ export class MainComponent implements OnInit {
     });
   }
   
-  getTopRecord() {
-    this.httpService.getTopRecords().subscribe((response:any)=>{
+  getTopRecord(norec) {
+    this.httpService.getTopRecords(norec).subscribe((response:any)=>{
       this.topRecoreds = response;
       if(this.topRecoreds && this.topRecoreds.length>0) {
         this.datasourceColumnNames = Object.keys(this.topRecoreds[0]);
@@ -167,13 +188,13 @@ export class MainComponent implements OnInit {
         var rowMap = statRecords[i];
         console.log(rowMap);
 
-        for(var j = 0; j< this.statColumns.length; j++) {
+        for(var j = 0; j< this.appConstants.statColumns.length; j++) {
           var cell = document.createElement('td');
-          if(this.statColumns[j]=="name") {
+          if(this.appConstants.statColumns[j]=="name") {
             cell.className = 'tblHeadRow';
           }
 
-          cell.innerHTML = rowMap[this.statColumns[j]];
+          cell.innerHTML = rowMap[this.appConstants.statColumns[j]];
           row.append(cell);
         }
         tableBody.append(row);
@@ -195,9 +216,9 @@ export class MainComponent implements OnInit {
     var tr = document.createElement('tr');
     tr.className = 'tblHeadRow';
 
-    for(var i=0; i<this.statColumnTitles.length; i++) {
+    for(var i=0; i<this.appConstants.statColumnTitles.length; i++) {
       var cell = tr.insertCell(i);
-      cell.innerHTML = this.statColumnTitles[i];
+      cell.innerHTML = this.appConstants.statColumnTitles[i];
       cell.className = 'tblHeadRow';
     }
 
@@ -289,9 +310,9 @@ export class MainComponent implements OnInit {
         chartContainerDiv.setAttribute('background-color', 'gray');
         boxdiv.append(chartContainerDiv);
         if(chartType==1) {
-          this.boxPlot(i, response[keys[i]], chartDiv);
+          this.graphPlotService.boxPlot(i, response[keys[i]], chartDiv);
         } else if(chartType == 2) {
-          this.density(i, response[keys[i]], chartDiv);
+          this.graphPlotService.density(i, response[keys[i]], chartDiv);
         }
         
 
@@ -301,149 +322,6 @@ export class MainComponent implements OnInit {
     },error=>{
       console.log(error);
     })
-  }
-
-  boxPlot(index, data, chartDiv) {
-    
-    var data_sorted = data.sort(d3.ascending);
-    
-    var margin = {top: 10, right: 30, bottom: 30, left: 40},
-    width = 300 - margin.left - margin.right,
-    height = 400 - margin.top - margin.bottom;
-    
-    var svg = d3.select(chartDiv)
-      .append("svg")
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
-      .append("g")
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-    var data_sorted = data.sort(d3.ascending)
-    var q1 = d3.quantile(data_sorted, .25)
-    var median = d3.quantile(data_sorted, .5)
-    var q3 = d3.quantile(data_sorted, .75)
-    var interQuantileRange = q3 - q1
-    var min = q1 - 1.5 * interQuantileRange
-    var max = q1 + 1.5 * interQuantileRange
-      
-    var y = d3.scaleLinear()
-        .domain([0,d3.max(data_sorted)])
-        .range([height, 0]);
-     svg.call(d3.axisLeft(y))
-      
-    var center = width/2;
-    var width = 100
-
-    svg
-      .append("line")
-        .attr("x1", center)
-        .attr("x2", center)
-        .attr("y1", y(min) )
-        .attr("y2", y(max) )
-        .attr("stroke", "black")
-      
-    svg
-      .append("rect")
-        .attr("x", center - width/2)
-        .attr("y", y(q3) )
-        .attr("height", (y(q1)-y(q3)) )
-        .attr("width", width )
-        .attr("stroke", "black")
-        .style("fill", "#69b3a2")
-      
-      // show median, min and max horizontal lines
-      svg
-      .selectAll("toto")
-      .data([min, median, max])
-      .enter()
-      .append("line")
-        .attr("x1", center-width/2)
-        .attr("x2", center+width/2)
-        .attr("y1", function(d){ return(y(d))} )
-        .attr("y2", function(d){ return(y(d))} )
-        .attr("stroke", "black")
-        
-        var jitterWidth = 50
-        svg
-          .selectAll("indPoints")
-          .data(data)
-          .enter()
-          .append("circle")
-            //.attr("cx", function(d){return(x(d.Species) - jitterWidth/2 + Math.random()*jitterWidth )})
-            .attr("cx", function(d){return(center)})
-            .attr("cy", function(d){return(y(d))})
-            .attr("r", 4)
-            .style("fill", "gray")
-            .attr("stroke", "black")
-  }
-
-  density(index, data, chartDiv) {
-
-    var margin = {top: 30, right: 30, bottom: 30, left: 50},
-    width = 460 - margin.left - margin.right,
-    height = 400 - margin.top - margin.bottom;
-
-    var svg = d3.select(chartDiv)
-      .append("svg")
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
-      .append("g")
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-
-    var x = d3.scaleLinear().domain([-10,15])
-          .range([0, width]);
-    
-          svg.append("g")
-          .attr("transform", "translate(0," + height + ")")
-          .call(d3.axisBottom(x));
-    
-      // add the y Axis
-      var y = d3.scaleLinear()
-                .range([height, 0])
-                .domain([0, 0.12]);
-      svg.append("g")
-          .call(d3.axisLeft(y));
-    
-      // Compute kernel density estimation
-      var kde = this.kernelDensityEstimator(this.kernelEpanechnikov(7), x.ticks(60))
-      var density1 =  kde(data
-          .filter( function(d){return d.type === "variable 1"} )
-          .map(function(d){  return d.value; }) )
-
-      // Plot the area
-      svg.append("path")
-          .attr("class", "mypath")
-          .datum(density1)
-          .attr("fill", "#69b3a2")
-          .attr("opacity", ".6")
-          .attr("stroke", "#000")
-          .attr("stroke-width", 1)
-          .attr("stroke-linejoin", "round")
-          .attr("d",  d3.line()
-            .curve(d3.curveBasis)
-              .x(function(d) { return x(d[0]); })
-              .y(function(d) { return y(d[1]); })
-          );
-    
-          svg.append("circle").attr("cx",300).attr("cy",30).attr("r", 6).style("fill", "#69b3a2")
-          svg.append("circle").attr("cx",300).attr("cy",60).attr("r", 6).style("fill", "#404080")
-          svg.append("text").attr("x", 320).attr("y", 30).text("variable A").style("font-size", "15px").attr("alignment-baseline","middle")
-          svg.append("text").attr("x", 320).attr("y", 60).text("variable B").style("font-size", "15px").attr("alignment-baseline","middle")
-
-  }
-
-  kernelDensityEstimator(kernel, X) {
-    return function(V) {
-      return X.map(function(x) {
-        return [x, d3.mean(V, function(v) { return kernel(x - v); })];
-      });
-    };
-  }
-  kernelEpanechnikov(k) {
-    return function(v) {
-      return Math.abs(v /= k) <= 1 ? 0.75 * (1 - v * v) / k : 0;
-    };
   }
 
   outlierCount() {
@@ -495,10 +373,19 @@ export class MainComponent implements OnInit {
   openModal(template: TemplateRef<any>, algType) {
 
     if(algType==1) {
-      this.modalAlgorithmList = this.regressionList;
+      this.modalTitle = "Regression";
+      this.modalAlgorithmList = this.appConstants.regressionList;
     } else if(algType==2) {
-      this.modalAlgorithmList = this.classificationList;
+      this.modalTitle = "Classification";
+      this.modalAlgorithmList = this.appConstants.classificationList;
+    } else if(algType==3) {
+      this.modalTitle = "Association";
+      this.modalAlgorithmList = this.appConstants.associationList;
+    } else if(algType==4) {
+      this.modalTitle = "Clustering";
+      this.modalAlgorithmList = this.appConstants.clusteringList;
     }
+
     
     this.modalRef = this.modalService.show(template);
   }
@@ -506,16 +393,43 @@ export class MainComponent implements OnInit {
   performRegression() {
     var request = {
       "trainDataSize": 80,
-      "ycolumn": "charges",
+      "ycolumn": this.selectedYColumn,
       "xcolumns": [],
-      "regressionType": "LinearRegression"
+      "regressionType": this.selectedAlgorithm
     }
 
-    this.httpService.postRegression(request).subscribe((response:any)=>{
-      console.log(response);
-    }, error=>{
-      console.log(error);
-    });
+    if(this.modalTitle == "Regression") {
+      
+      this.httpService.postRegression(request).subscribe((response:any)=>{
+        console.log(response);
+      }, error=>{
+        console.log(error);
+      });
+    } else if(this.modalTitle == "Classification") {
+      this.httpService.postClassification(request).subscribe((response:any)=>{
+        console.log(response);
+      }, error=>{
+        console.log(error);
+      });
+      
+    } else if(this.modalTitle == "Association") {
+      
+      
+    } else if(this.modalTitle == "Clustering") {
+      
+      
+    }
+
+
+
+  }
+
+  getTop(rec) {
+
+  }
+
+  getTrail(rec) {
+
   }
 }
 

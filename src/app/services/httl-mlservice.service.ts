@@ -22,8 +22,8 @@ export class HttlMLServiceService {
     }));
   }
 
-  getTopRecords() {
-    return this.httpClient.get(this.urlPrefix+ "/top/5", {headers: this.getSessionHeader()}).pipe(map(response=>{
+  getTopRecords(norec) {
+    return this.httpClient.get(this.urlPrefix+ "/top/" + norec, {headers: this.getSessionHeader()}).pipe(map(response=>{
       console.log(response);
       return response;
     }));
@@ -76,6 +76,13 @@ export class HttlMLServiceService {
 
   postRegression(regressionBody) {
     return this.httpClient.post(this.urlPrefix+ "/regression", regressionBody, {headers: this.getSessionHeader()}).pipe(map(response=>{
+      console.log(response);
+      return response;
+    }));
+  }
+
+  postClassification(regressionBody) {
+    return this.httpClient.post(this.urlPrefix+ "/classification", regressionBody, {headers: this.getSessionHeader()}).pipe(map(response=>{
       console.log(response);
       return response;
     }));
