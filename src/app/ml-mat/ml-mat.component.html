@@ -1,0 +1,24 @@
+<mat-drawer-container class="example-container" >
+    <mat-drawer #drawer class="example-sidenav" mode="side">
+        <div>
+            <mat-grid-list cols="2" rowHeight="50px">
+                <mat-grid-tile>
+                    <input type="file" [formControl]="fileNameCtrl" class="form-control btn-lg" id="customFile" (change)="handleFileInput($event)"/>
+                </mat-grid-tile>
+                <mat-grid-tile>
+                    <button mat-raised-button color="Primary" (click)="uploadFile()">Upload</button>
+                </mat-grid-tile>
+               
+            </mat-grid-list>        
+    
+        </div>
+      
+    </mat-drawer>
+  
+    <div class="example-sidenav-content">
+      <button mat-button (click)="drawer.toggle()">
+        Toggle sidenav
+      </button>
+    </div>
+  
+  </mat-drawer-container>
