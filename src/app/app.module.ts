@@ -12,13 +12,16 @@ import { NgScrollbarModule } from 'ngx-scrollbar';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { ModalModule, BsModalService } from 'ngx-bootstrap/modal';
 import { AppConstants } from './app.constants';
-
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MlMatComponent } from './ml-mat/ml-mat.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    MainComponent    
+    MainComponent,
+    MlMatComponent    
   ],
   imports: [
     CollapseModule,
@@ -30,7 +33,10 @@ import { AppConstants } from './app.constants';
     BrowserAnimationsModule,
     NgScrollbarModule,
     BsDropdownModule,
-    ModalModule
+    ModalModule,
+    MatGridListModule,
+    MatSidenavModule,
+    BrowserAnimationsModule
   ],
   providers: [ BsModalService, AppConstants ],
   bootstrap: [AppComponent]

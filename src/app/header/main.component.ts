@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef } from '@angular/core';
+import { Component, OnInit, TemplateRef} from '@angular/core';
 import { ComponentInterService } from '../services/component-inter.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { HttlMLServiceService } from '../services/httl-mlservice.service';
@@ -53,6 +53,8 @@ export class MainComponent implements OnInit {
   classificationList = [{label: "Naive Byes", value: "NaiveByes"}, {label: "Tree", value: "Tree"}, {label: "Random Forest", value: "Random Forest"}, {label: "Logistic", value: "Logistic regression"}];
   */
   modalAlgorithmList = [{label: "", value: ""}];
+  mainDivWidth = 0;
+  mainDivHeight = 0;
 
 
   modalRef: BsModalRef;
@@ -68,7 +70,15 @@ export class MainComponent implements OnInit {
     this.datasource = "";
     this.isDatasource = false;
     this.createStatTableTitleRow();
+
+    console.log("inner Width: " + window.innerWidth);
+    console.log("inner Height: " + window.innerHeight);
+
+    this.mainDivHeight = window.innerHeight - 10;
+    this.mainDivWidth = window.innerWidth - 500;
+    
   }
+
 
   appendText() {
       this.componentInterService.triggerEvent("Message sent");
@@ -78,9 +88,20 @@ export class MainComponent implements OnInit {
     this.httpService.uploadFile(this.fileToUpload).subscribe((response:any) => {
       this._cookiesService.set('user-serssion', response.sessionId);
       this.datasource = response.fileName;
+      console.log("inner Width: " + window.innerWidth);
+      console.log("inner Height: " + window.innerHeight);
+  
+      console.log("before div width: " + document.getElementById("maindiv").style.width);
+      console.log("before div height: " + document.getElementById("maindiv").style.height);
+      
+      document.getElementById("maindiv").style.height = this.mainDivHeight+"px";
+      document.getElementById("maindiv").style.width = this.mainDivWidth+"px";
+      
+      console.log("after div width: " + document.getElementById("maindiv").style.width);
+      console.log("after div height: " + document.getElementById("maindiv").style.height);
 
       
-      
+      this.scrollToBottom();
 
       this.getTopRecord(5);
       this.isDatasource = true;
@@ -99,7 +120,7 @@ export class MainComponent implements OnInit {
       }
 
       this.createTableObjectForData(this.topRecoreds);
-      
+      this.scrollToBottom();
     })
   }
 
@@ -206,7 +227,7 @@ export class MainComponent implements OnInit {
       mydiv.append(table);
       mydiv.append(this.getSeperator());
       document.getElementById("maindiv").append(mydiv);
-  
+      this.scrollToBottom();
       console.log(response);
     })
   }
@@ -262,7 +283,7 @@ export class MainComponent implements OnInit {
       }
       
 
-
+      this.scrollToBottom();
     },error=>{
 
     })
@@ -315,7 +336,7 @@ export class MainComponent implements OnInit {
           this.graphPlotService.density(i, response[keys[i]], chartDiv);
         }
         
-
+        this.scrollToBottom();
       }
       
       document.getElementById("maindiv").append(boxdiv);
@@ -357,6 +378,7 @@ export class MainComponent implements OnInit {
         mydiv.append(table);
         document.getElementById("maindiv").append(mydiv);
       }
+      this.scrollToBottom();
       
     },error=>{
       console.log(error);
@@ -401,6 +423,68 @@ export class MainComponent implements OnInit {
     if(this.modalTitle == "Regression") {
       
       this.httpService.postRegression(request).subscribe((response:any)=>{
+
+
+        var table = document.createElement('table');
+        table.className = 'table';
+
+        var thead = table.createTHead();
+        var thr = thead.insertRow(0);
+        thr.className = 'tblHeadRow';
+        
+        thr.insertCell(0).innerHTML = 'Variable';
+        thr.insertCell(1).innerHTML = 'Coefficient';
+        thr.insertCell(2).innerHTML = 'SE of Coef';
+        thr.insertCell(3).innerHTML = 't-Stat';
+
+        var tstats = response.tstats;
+        var attributes = response.selectedAttributeNames;
+        var coefficients = response.coefficients;
+        var stdErrorOfCoefficient = response.stdErrorOfCoefficient;
+        attributes.push("constant");
+
+        table.append(thead);
+
+        var tbody = table.createTBody();
+
+        for(var i = 0; i<attributes.length; i++) {
+          var tr = tbody.insertRow(i);
+          tr.insertCell(0).innerHTML = attributes[i];
+          tr.insertCell(1).innerHTML = coefficients[i];
+          tr.insertCell(2).innerHTML = stdErrorOfCoefficient[i];
+          tr.insertCell(2).innerHTML = tstats[i];
+        }
+
+        table.append(tbody);
+        var mydiv = this.createContainerWithTitleDiv("Regression Analysis:");
+        mydiv.append(table);
+
+
+        var regressionConstants = document.createElement("div");
+        var tableCoeff = document.createElement('table');
+        var theadCoeff = tableCoeff.createTBody();
+        var rowcoeff1 = theadCoeff.insertRow(0);
+
+        rowcoeff1.insertCell(0).innerHTML = "<b>R^2 value</b>";
+        rowcoeff1.insertCell(1).innerHTML = response.rsquared;
+        var rowcoeff2 = theadCoeff.insertRow(1);
+        rowcoeff2.insertCell(0).innerHTML = "<b>Adjusted R^2&nbsp;&nbsp;&nbsp;</b>";
+        rowcoeff2.insertCell(1).innerHTML = response.rsquaredAdj;
+        var rowcoeff3 = theadCoeff.insertRow(2);
+        rowcoeff3.insertCell(0).innerHTML = "<b>F-stat</b>";
+        rowcoeff3.insertCell(1).innerHTML = response.fstat;
+
+        regressionConstants.append(tableCoeff);
+
+
+          
+        document.getElementById("maindiv").append(mydiv);
+        
+        document.getElementById("maindiv").append(regressionConstants);
+
+
+
+
         console.log(response);
       }, error=>{
         console.log(error);
@@ -419,9 +503,7 @@ export class MainComponent implements OnInit {
       
       
     }
-
-
-
+    this.scrollToBottom();
   }
 
   getTop(rec) {
@@ -431,6 +513,10 @@ export class MainComponent implements OnInit {
   getTrail(rec) {
 
   }
+
+  scrollToBottom() {
+    //console.log("******** height: " + document.getElementById("maindiv").style.height);
+    var element = document.getElementById("maindiv");
+    element.scrollTo(0, element.scrollHeight);
+  }
 }
-
-
