@@ -1,11 +1,12 @@
 /* You can add global styles to this file, and also import other style files */
-@import url('../node_modules/bootstrap/dist/css/bootstrap.css');
+@import url('../node_modules/bootstrap/dist/css/bootstrap.min.css');
 @import url('../node_modules/bootstrap/dist/css/bootstrap-grid.min.css');
 @import url('../node_modules/bootstrap/dist/css/bootstrap-utilities.min.css');
 @import url('../node_modules/bootstrap/dist/css/bootstrap.min.css');
 @import url('../node_modules/bootstrap/dist/css/bootstrap-utilities.rtl.min.css');
 @import url('../node_modules/bootstrap/dist/css/bootstrap.rtl.min.css');
 @import "../node_modules/@angular/material/prebuilt-themes/purple-green.css";
+
 .tblHeadRow {
     font-weight: bold;
 }
@@ -14,7 +15,6 @@
 .main-canvas {
     height: 100vh;
 }
-
 
 .main-canvas1 ng-scrollbar {
     height: calc(100vh - 72px);

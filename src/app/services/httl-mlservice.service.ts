@@ -88,5 +88,13 @@ export class HttlMLServiceService {
     }));
   }
 
+  postAssociation(regressionBody) {
+    return this.httpClient.post(this.urlPrefix+ "/association", regressionBody, {headers: this.getSessionHeader()}).pipe(map(response=>{
+      console.log(response);
+      return response;
+    }));
+  }
+
+  
 
 }

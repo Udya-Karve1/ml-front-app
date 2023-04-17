@@ -3,7 +3,7 @@ import { ComponentInterService } from '../services/component-inter.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { HttlMLServiceService } from '../services/httl-mlservice.service';
 import { CookieService } from 'ngx-cookie-service';
-
+import * as $ from 'jquery';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { GraphPlotService } from '../services/graph.plot.service';
 import { AppConstants } from '../app.constants'
@@ -100,7 +100,7 @@ export class MainComponent implements OnInit {
       console.log("after div width: " + document.getElementById("maindiv").style.width);
       console.log("after div height: " + document.getElementById("maindiv").style.height);
 
-      
+      this.showToast();
       this.scrollToBottom();
 
       this.getTopRecord(5);
@@ -497,6 +497,11 @@ export class MainComponent implements OnInit {
       });
       
     } else if(this.modalTitle == "Association") {
+      this.httpService.postAssociation(request).subscribe((response:any)=>{
+        console.log(response);
+      }, error=>{
+        console.log(error);
+      });
       
       
     } else if(this.modalTitle == "Clustering") {
@@ -518,5 +523,12 @@ export class MainComponent implements OnInit {
     //console.log("******** height: " + document.getElementById("maindiv").style.height);
     var element = document.getElementById("maindiv");
     element.scrollTo(0, element.scrollHeight);
+  }
+
+  showToast() {
+    $("#liveToast").removeClass("hide");
+    $("#liveToast").addClass("show")
+    setTimeout(()=>{$("#liveToast").addClass("hide");$("#liveToast").removeClass("show");}, 3000);
+    
   }
 }
