@@ -5,7 +5,7 @@
                 <div class="container">
                     <nav class="navbar navbar-expand-lg navbar-light bg-light">
                         <input type="file" [formControl]="fileNameCtrl" class="form-control btn-lg" id="customFile" (change)="handleFileInput($event)"/>
-                        <button class="btn btn-outlined-success form-control  " aria-disabled="false" (click)="uploadFile()">Upload</button>
+                        <button class="btn btn-outline-primary form-control btn-sm " aria-disabled="false" (click)="uploadFile()">Upload</button>
                     </nav>
                 </div>        
             </section>
@@ -15,7 +15,7 @@
                 <div>
                     <div class="row g-1">
                         <div class="d-grid">
-                            <button type="button" class="btn btn-outline-info" (click)="isCollapsed=!isCollapsed"
+                            <button type="button" class="btn btn-outline-info btn-sm" (click)="isCollapsed=!isCollapsed"
                                 [attr.aria-expanded]="!isCollapsed" aria-controls="collapseExample">
                                 {{datasource}}
                             </button>
@@ -29,7 +29,7 @@
                                     <div class="col-3 d-grid">
                                         <div class="btn-group" dropdown>
                                             
-                                            <button id="btntop" dropdownToggle type="button" class="btn btn-outline-primary dropdown-toggle"
+                                            <button id="btntop" dropdownToggle type="button" class="btn btn-outline-primary btn-sm dropdown-toggle"
                                                 aria-controls="dropdown-basic" > Top
                                             </button>
               
@@ -82,12 +82,11 @@
                                               
                                             <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu" role="menu" aria-labelledby="button-basic">
                                                 <li role="menuitem">
-                                                    <button class="dropdown-item button-basic" (click)="getTrail(5)"> Handle and View</button>
+                                                    <button class="dropdown-item button-basic" (click)="handleCategorical()"> Handle and View</button>
                                                 </li>
                                                 <li role="menuitem">
-                                                    <button class="dropdown-item button-basic" (click)="getTrail(10)">Handle and Save</button>
+                                                    <button class="dropdown-item button-basic" (click)="handleCategorical()">Handle and Save</button>
                                                 </li>
-                                                
                                             </ul>
                                         </div>
                                     </div>
@@ -98,13 +97,13 @@
 
                                     <div class="col-3">
                                         <div class="d-grid gap-1">
-                                            <button class="btn btn-outline-secondary" (click)="getMissingValues()">Missing</button>
+                                            <button class="btn btn-outline-info" (click)="getMissingValues()">Missing</button>
                                         </div>                                    
                                     </div>
                                     <div class="col-3">
                                         <div class="d-grid gap-1">
                                             <div class="btn-group" dropdown>
-                                                <button id="button-basic" dropdownToggle type="button" class="btn btn-outline-primary dropdown-toggle"
+                                                <button id="button-basic" dropdownToggle type="button" class="btn btn-outline-info dropdown-toggle"
                                                     aria-controls="dropdown-basic"> Unique
                                                 </button>
                                                   
@@ -118,20 +117,21 @@
                                     </div>
                                     <div class="col-3">
                                         <div class="d-grid gap-1">
-                                            <button class="btn btn-outline-secondary" (click)="getStats()">Stats</button>
+                                            <button class="btn btn-outline-info" (click)="getStats()">Stats</button>
                                         </div>                                    
                                     </div>
+
                                     <div class="col-3">
                                         <div class="d-grid gap-1">
                                             <div class="d-grid gap-1">
                                                 <div class="btn-group" dropdown>
                                                     <button id="button-basic" 
                                                         dropdownToggle type="button" 
-                                                        class="btn btn-outline-secondary dropdown-toggle"
+                                                        class="btn btn-outline-info dropdown-toggle"
                                                         aria-controls="dropdown-basic"> 
                                                         Outlier
                                                     </button>
-                                                      
+
                                                     <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu" role="menu" aria-labelledby="button-basic">
                                                         <li>
                                                             <button class="dropdown-item button-basic" (click)="plotChart(1)">Box plot</button>
@@ -144,21 +144,33 @@
                                                         </li>
                                                     </ul>
                                                 </div>
-                                            </div>    
-
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="d-grid gap-1">
+                                            <button class="btn btn-outline-info" (click)="getStats()">Corr</button>
                                         </div>                                    
                                     </div>
-
-                                    <div class="btn-group" dropdown>
-                                        <button id="button-basic" dropdownToggle type="button" class="btn btn-outline-danger dropdown-toggle"
-                                            aria-controls="dropdown-basic"> Delete column
-                                        </button>
-                                          
-                                        <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu" role="menu" aria-labelledby="button-basic">
-                                            <li role="menuitem" *ngFor="let item of datasourceColumnNames; ">
-                                                <button class="dropdown-item button-basic" (click)="getUniqueValues(item)">{{item}}</button>
-                                            </li>
-                                        </ul>
+                                    <div class="col-6">
+                                        <div class="d-grid gap-1">
+                                            <div class="btn-group" dropdown>
+                                                <button id="button-basic" dropdownToggle type="button" class="btn btn-outline-danger dropdown-toggle"
+                                                    aria-controls="dropdown-basic"> Delete column
+                                                </button>
+                                                  
+                                                <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu" role="menu" aria-labelledby="button-basic">
+                                                    <li role="menuitem" *ngFor="let item of datasourceColumnNames; ">
+                                                        <button class="dropdown-item button-basic" (click)="deleteColumn(confirmationTemplate, item)">{{item}}</button>
+                                                    </li>
+                                                </ul>
+                                            </div>        
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="d-grid gap-1">
+                                            <button class="btn btn-outline-success">Add Column</button>
+                                        </div>
                                     </div>
 
 
@@ -235,6 +247,29 @@
         </div>
      </ng-template>
 
+
+     <ng-template #confirmationTemplate>
+        <div class="modal-header">
+           <h4 class="modal-title pull-left">{{modalTitle}}</h4>
+           <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+              <span aria-hidden="true">×</span>
+           </button>
+        </div>
+        <div class="modal-body">
+            <div class="content">
+                <div class="row">
+                    <div class="col-12">
+                        <label>Do you realy want to delete '{{deleteColumnName}}'?</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-outline-primary" (click)="modalRef.hide();performDeleteColumn()">Yes</button>
+           <button type="button" class="btn btn-outline-secondary" (click)="modalRef.hide()">No</button>
+        </div>
+     </ng-template>
+
      <!-- ****** TOAST STARTS ************** -->
 
      <div class="toast-container position-fixed bottom-0 end-0 p-3">
@@ -292,6 +327,7 @@
           </div>
         </div>
     </div>
+    
 
 
 </div>

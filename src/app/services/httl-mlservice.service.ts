@@ -76,21 +76,33 @@ export class HttlMLServiceService {
 
   postRegression(regressionBody) {
     return this.httpClient.post(this.urlPrefix+ "/regression", regressionBody, {headers: this.getSessionHeader()}).pipe(map(response=>{
-      console.log(response);
       return response;
     }));
   }
 
   postClassification(regressionBody) {
     return this.httpClient.post(this.urlPrefix+ "/classification", regressionBody, {headers: this.getSessionHeader()}).pipe(map(response=>{
-      console.log(response);
       return response;
     }));
   }
 
   postAssociation(regressionBody) {
     return this.httpClient.post(this.urlPrefix+ "/association", regressionBody, {headers: this.getSessionHeader()}).pipe(map(response=>{
-      console.log(response);
+      
+      return response;
+    }));
+  }
+
+  deleteColumn(columnName) {
+    return this.httpClient.delete(this.urlPrefix+ "/delete-attribute/"+ columnName, {headers: this.getSessionHeader()}).pipe(map(response=>{
+      
+      return response;
+    }));
+  }
+
+  handleCategorical() {
+    return this.httpClient.put(this.urlPrefix+ "/handle-categorical", {headers: this.getSessionHeader()}).pipe(map(response=>{
+      
       return response;
     }));
   }

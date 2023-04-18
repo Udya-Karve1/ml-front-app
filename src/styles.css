@@ -6,6 +6,9 @@
 @import url('../node_modules/bootstrap/dist/css/bootstrap-utilities.rtl.min.css');
 @import url('../node_modules/bootstrap/dist/css/bootstrap.rtl.min.css');
 @import "../node_modules/@angular/material/prebuilt-themes/purple-green.css";
+@import "../node_modules/bootstrap/dist/css/bootstrap-utilities.min.css";
+
+@import '../node_modules/ngx-toastr/toastr.css';
 
 .tblHeadRow {
     font-weight: bold;

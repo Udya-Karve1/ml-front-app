@@ -7,6 +7,9 @@ import * as $ from 'jquery';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { GraphPlotService } from '../services/graph.plot.service';
 import { AppConstants } from '../app.constants'
+import { MyToasterService, toastPayload } from '../services/my-toaster.service';
+import { IndividualConfig } from 'ngx-toastr';
+
 
 @Component({
   selector: 'app-header',
@@ -26,23 +29,8 @@ export class MainComponent implements OnInit {
   
 
   statHeadRow = null;
-  /*
-  statColumns = ["name","date","nominal","numeric","regular","averagable","dateFormat","count","max","min","stdDev","mean","sum","distinct","unique","missing","nominalCount"];
-  statColumnTitles = ["Name","isDate","isNominal","isNumeric","isRegular","isAveragable","DateFormat","count","max","min","stdDev","mean","sum","distinct","unique","missing","nominalCount"];
-*/
   datasourceColumnNames = [];
-  /*
-  associationList = [{label: "Apriori", value: "Apriori"}, {label: "Eclat", value: "Eclat"}, {label: "F-P Growth", value: "FPGrowth"}];
-  clusteringList = [{label: "K-means", value: "Kmeans"}, {label: "DBSCAN", value: "DBSCAN"}
-  , {label: "F-P Growth", value: "FPGrowth"}
-  , {label: "Gaussian Mixture", value: "GaussianMixture"}
-  , {label: "BIRCH", value: "BIRCH"}
-  , {label: "Affinity Propagation", value: "AffinityPropagation"}
-  , {label: "Mean-Shift", value: "MeanShift"}
-  , {label: "OPTICS", value: "OPTICS"}
-  , {label: "Agglomerative", value: "Agglomerative"}
-];
-*/
+  deleteColumnName = "";
   
   modalTitle = "";
   selectedYColumn = "";
@@ -55,7 +43,7 @@ export class MainComponent implements OnInit {
   modalAlgorithmList = [{label: "", value: ""}];
   mainDivWidth = 0;
   mainDivHeight = 0;
-
+  toast!: toastPayload;
 
   modalRef: BsModalRef;
 
@@ -64,7 +52,8 @@ export class MainComponent implements OnInit {
     , private _cookiesService: CookieService
     , private modalService: BsModalService
     , private graphPlotService: GraphPlotService
-    , private appConstants: AppConstants) { }
+    , private appConstants: AppConstants
+    , private toasterService: MyToasterService) { }
 
   ngOnInit(): void {
     this.datasource = "";
@@ -73,8 +62,7 @@ export class MainComponent implements OnInit {
 
     console.log("inner Width: " + window.innerWidth);
     console.log("inner Height: " + window.innerHeight);
-
-    this.mainDivHeight = window.innerHeight - 10;
+this.mainDivHeight = window.innerHeight - 10;
     this.mainDivWidth = window.innerWidth - 500;
     
   }
@@ -100,14 +88,14 @@ export class MainComponent implements OnInit {
       console.log("after div width: " + document.getElementById("maindiv").style.width);
       console.log("after div height: " + document.getElementById("maindiv").style.height);
 
-      this.showToast();
+      this.showToast('File uploaded', 'Success');
       this.scrollToBottom();
 
       this.getTopRecord(5);
       this.isDatasource = true;
     },
-    error=>{      
-      alert(error);
+    error=>{            
+      this.showToast(error.statusText, 'error');
     });
   }
   
@@ -121,6 +109,8 @@ export class MainComponent implements OnInit {
 
       this.createTableObjectForData(this.topRecoreds);
       this.scrollToBottom();
+    }, error=>{
+      this.showToast(error, 'error');
     })
   }
 
@@ -525,10 +515,54 @@ export class MainComponent implements OnInit {
     element.scrollTo(0, element.scrollHeight);
   }
 
-  showToast() {
-    $("#liveToast").removeClass("hide");
-    $("#liveToast").addClass("show")
-    setTimeout(()=>{$("#liveToast").addClass("hide");$("#liveToast").removeClass("show");}, 3000);
-    
+  showToast(tstmsg, tsttitle) {
+    this.toast = {
+      message: tstmsg,
+      title: tsttitle,
+      type: 'type',
+      ic: {
+        timeOut: 2500,
+        closeButton: true,
+      } as IndividualConfig,
+    };
+    this.toasterService.showToast(this.toast);
+  }
+
+  deleteColumn(template: TemplateRef<any>, item) {
+    this.deleteColumnName = item;
+    this.modalRef = this.modalService.show(template); 
+  }
+
+  performDeleteColumn() {
+    console.log("performDeleteColumn called......");
+    console.info("performDeleteColumn called info......");
+    this.httpService.deleteColumn(this.deleteColumnName).subscribe((response:any)=>{
+      console.log("success");
+      console.info("success info");
+      this.showToast(this.deleteColumnName + ' deleted', 'Column Deleted');
+      let tmpArr = [];
+      for(var i=0; i<this.datasourceColumnNames.length; i++) {
+        if(this.datasourceColumnNames[i]!=this.deleteColumnName) {
+          tmpArr.push(this.datasourceColumnNames[i]);
+        }
+      }
+      console.log(tmpArr);
+      console.log(this.datasourceColumnNames);
+      console.info("--------------------");
+      console.info(tmpArr);
+      console.info(this.datasourceColumnNames);
+
+      this.datasourceColumnNames = tmpArr;
+    }, error=>{
+      console.log("error");
+      console.log(error);
+      this.showToast(error.statusText, 'error');
+    });
+  }
+
+  handleCategorical() {
+    this.httpService.handleCategorical().subscribe((response:any)=>{
+      
+    });
   }
 }
