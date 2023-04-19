@@ -3,15 +3,20 @@
     height: 100%;
     background-color: rgb(238, 238, 168);
     border: 1px solid rgba(0, 0, 0, 0.5);
-  }
+}
   
-  .example-sidenav-content {
+.example-sidenav-content {
     display: flex;
     height: 100%;
     align-items: center;
     justify-content: center;
-  }
+}
   
-  .example-sidenav {
+.example-sidenav {
     padding: 20px;
-  }
+}
+
+.cell-class{
+  white-space: nowrap;
+  text-align: right !important;
+}  

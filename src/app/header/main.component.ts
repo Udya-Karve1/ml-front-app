@@ -534,11 +534,7 @@ this.mainDivHeight = window.innerHeight - 10;
   }
 
   performDeleteColumn() {
-    console.log("performDeleteColumn called......");
-    console.info("performDeleteColumn called info......");
     this.httpService.deleteColumn(this.deleteColumnName).subscribe((response:any)=>{
-      console.log("success");
-      console.info("success info");
       this.showToast(this.deleteColumnName + ' deleted', 'Column Deleted');
       let tmpArr = [];
       for(var i=0; i<this.datasourceColumnNames.length; i++) {
@@ -546,23 +542,113 @@ this.mainDivHeight = window.innerHeight - 10;
           tmpArr.push(this.datasourceColumnNames[i]);
         }
       }
-      console.log(tmpArr);
-      console.log(this.datasourceColumnNames);
-      console.info("--------------------");
-      console.info(tmpArr);
-      console.info(this.datasourceColumnNames);
 
       this.datasourceColumnNames = tmpArr;
     }, error=>{
-      console.log("error");
-      console.log(error);
       this.showToast(error.statusText, 'error');
     });
   }
 
   handleCategorical() {
     this.httpService.handleCategorical().subscribe((response:any)=>{
-      
+
     });
+  }
+  getCorrelation(corrtype) {
+    this.httpService.getCorrelation().subscribe((response:any)=>{
+
+      if(corrtype==1) {
+        var boxdiv = document.createElement('div');
+        boxdiv.className = 'row';
+  
+        var seperatDiv = document.createElement('div');
+        seperatDiv.className = 'row';
+        var seperator = document.createElement('div');
+        seperator.className = "col-12";
+        seperator.append(this.getSeperator());
+        seperatDiv.append(seperator);
+        document.getElementById("maindiv").append(seperatDiv);
+
+        document.getElementById("maindiv").append(boxdiv);
+        boxdiv = document.createElement('div');
+        boxdiv.className = 'row';
+
+
+        var chartContainerDiv = document.createElement('div') ;
+        chartContainerDiv.className="col-12";
+        var chartDiv = document.createElement('div');
+        chartContainerDiv.append(chartDiv);
+        chartContainerDiv.setAttribute('background-color', 'gray');
+        boxdiv.append(chartContainerDiv);
+        
+        this.graphPlotService.heatMap(response, chartDiv);
+        document.getElementById("maindiv").append(boxdiv);        
+        
+        this.scrollToBottom();        
+
+      } else {
+
+        var attributes = response.attributes;
+        var correlationMatrix = response.correlationMatrix;
+
+        var table = document.createElement('table');        
+        table.className = 'table table-bordered';
+        var thead = document.createElement('thead');
+
+        var rowTitle = document.createElement('tr');
+
+        
+        var td = document.createElement('th');
+        td.innerHTML = "";
+        rowTitle.append(td);
+
+        for(var i=0; i<attributes.length; i++) {
+          var td = document.createElement('th');
+          td.innerHTML = attributes[i];
+          rowTitle.append(td);
+        }
+        thead.append(rowTitle);
+        table.append(thead);
+
+        var tableBody = document.createElement('tbody');
+        //var correlationMatrix =
+  
+        for(var i = 0;i < correlationMatrix.length; i++) {
+          var row = document.createElement('tr');
+          var rowMap = correlationMatrix[i];
+          console.log(rowMap);
+
+          var cell = document.createElement('td');
+          cell.innerHTML = attributes[i];
+          cell.className = 'tblHeadRow';
+          row.append(cell);
+  
+          for(var j = 0; j< rowMap.length; j++) {
+            var cell = document.createElement('td');
+            cell.className = "cell-class";
+
+            var cellvalue = rowMap[j]*100.00;
+            if(cellvalue==100.00) {
+              cell.innerHTML = "100 &nbsp%";
+            } else {
+              cell.innerHTML = (rowMap[j]*100.00).toFixed(2)+"&nbsp%";
+            }
+            
+            row.append(cell);
+          }
+          tableBody.append(row);
+        }
+  
+        table.append(tableBody);
+        
+        var mydiv = this.createContainerWithTitleDiv("Correlation");
+        mydiv.append(table);
+        mydiv.append(this.getSeperator());
+        document.getElementById("maindiv").append(mydiv);
+        this.scrollToBottom();
+
+      }
+
+    })
   }
 }

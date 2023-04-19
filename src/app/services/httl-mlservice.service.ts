@@ -102,9 +102,15 @@ export class HttlMLServiceService {
 
   handleCategorical() {
     return this.httpClient.put(this.urlPrefix+ "/handle-categorical", {headers: this.getSessionHeader()}).pipe(map(response=>{
-      
       return response;
     }));
+  }
+
+  getCorrelation() {
+    return this.httpClient.get(this.urlPrefix+ "/correlation", {headers: this.getSessionHeader()}).pipe(map(response=>{
+      return response;
+    }));
+
   }
 
   

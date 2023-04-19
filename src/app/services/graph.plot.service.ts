@@ -8,7 +8,126 @@ export class GraphPlotService {
 
   constructor() { }
 
-  
+  getMaxChar(myarr) {
+    var len = 0;
+    for(var i =0; i<myarr.length; i++) {
+      if(len<myarr[i].length) {
+        len = myarr[i].length;
+      }
+    }
+    return len;
+  }
+
+
+  heatMap(response, chartDiv) {
+
+
+    var heightwidth = response.attributes.length * 70;
+    var attribu = response.attributes;
+
+    var maxlen = this.getMaxChar(response.attributes);
+
+    var marginleft = ((40/6) * maxlen) + 20;
+    console.log('marginleft>>' + ((40/6) * maxlen));
+
+
+    var margin = {top: 10, right: 30, bottom: marginleft, left: marginleft},
+    width = heightwidth - margin.left - margin.right,
+    height = heightwidth - margin.top - margin.bottom;
+
+    var svg = d3.select(chartDiv)
+      .append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+      var myGroups = response.attributes;
+      var myVars = response.attributes;
+      
+      // Build X scales and axis:
+      var x = d3.scaleBand()
+        .range([ 0, width ])
+        .domain(myGroups)
+        .padding(0.01);
+      svg.append("g")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(x))
+        .selectAll("text")
+          .attr("transform", "translate(-10,10)rotate(-45)")
+          .style("text-anchor", "end")
+          .style("font-size", 12);
+      
+      // Build X scales and axis:
+      var y = d3.scaleBand()
+        .range([ height, 0 ])
+        .domain(myVars)
+        .padding(0.01);
+      svg.append("g")
+        .call(d3.axisLeft(y))
+        .selectAll("text")          
+          .style("text-anchor", "end")
+          .style("font-size", 12);
+      
+      // Build color scale
+      var myColor = d3.scaleLinear()
+        .range(["white", "#69b3a2"])
+        .domain([1,(myGroups.length*myGroups.length)])
+
+        myColor = d3.scaleSequential()
+    .interpolator(d3.interpolateInferno)
+    .domain([1,(myGroups.length*myGroups.length)]);
+
+      var data = response.correlationList;
+      
+        // Three function that change the tooltip when user hover / move / leave a cell
+
+    var tooltip = d3.select(chartDiv)
+        .append("div")
+        .style("opacity", 0)
+        .attr("class", "tooltip")
+        .style("background-color", "white")
+        .style("border", "solid")
+        .style("border-width", "2px")
+        .style("border-radius", "5px")
+        .style("padding", "5px")
+
+  var mouseover = function(d) {
+    tooltip
+      .style("opacity", 1)
+    d3.select(this)
+      .style("stroke", "black")
+      .style("opacity", 1)
+  }
+  var mousemove = function(d) {
+    tooltip
+      .html("The exact value of<br>this cell is: " + d.value)
+      .style("left", (d3.mouse(this)[0]+70) + "px")
+      .style("top", (d3.mouse(this)[1]) + "px")
+  }
+  var mouseleave = function(d) {
+    tooltip
+      .style("opacity", 0)
+    d3.select(this)
+      .style("stroke", "none")
+      .style("opacity", 0.8)
+  }
+
+        
+      svg.selectAll()
+        .data(data, function(d) {return d.attribute1+':'+d.attribute2;})
+        .enter()
+        .append("rect")
+        .attr("x", function(d) { return x(d.attribute1) })
+        .attr("y", function(d) { return y(d.attribute2) })
+        .attr("width", x.bandwidth() )
+        .attr("height", y.bandwidth() )
+        .style("fill", function(d) { return myColor((d.value))} )
+        .on("mouseover", mouseover)
+        .on("mousemove", mousemove)
+        .on("mouseleave", mouseleave)
+  }
+
   boxPlot(index, data, chartDiv) {
     
     var data_sorted = data.sort(d3.ascending);

@@ -149,7 +149,21 @@
                                     </div>
                                     <div class="col-3">
                                         <div class="d-grid gap-1">
-                                            <button class="btn btn-outline-info" (click)="getStats()">Corr</button>
+                                            <div class="btn-group" dropdown>
+                                                <button id="button-basic" dropdownToggle type="button" class="btn btn-outline-info dropdown-toggle"
+                                                    aria-controls="dropdown-basic"> Corr
+                                                </button>
+                                                  
+                                                <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu" role="menu" aria-labelledby="button-basic">
+                                                    <li role="menuitem">
+                                                        <button class="dropdown-item button-basic" (click)="getCorrelation(1)">Heatmap</button>
+                                                    </li>
+                                                    <li role="menuitem">
+                                                        <button class="dropdown-item button-basic" (click)="getCorrelation(2)">Values</button>
+                                                    </li>
+                                                </ul>
+                                            </div>        
+
                                         </div>                                    
                                     </div>
                                     <div class="col-6">
@@ -328,6 +342,6 @@
         </div>
     </div>
     
-
+    <div id="my_dataviz"></div>
 
 </div>
